@@ -1,0 +1,21 @@
+{
+  "name": "former",
+  "version": "1.0.0",
+  "description": "express by sagnik",
+  "license": "ISC",
+  "author": "sagnik",
+  "main": "script.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "hbs": "^4.2.0",
+    "mongoose": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
