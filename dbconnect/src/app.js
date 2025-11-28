@@ -1,14 +1,17 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import express from "express";
-import path from "path"
+import path from "path";
+import  {fileURLToPath} from "url";
+const __dirname = path .dirname(fileURLToPath(import.meta.url))
 const app = express();
+// import {usermodel} from "./db/conn.js"; 
 dotenv.config();
 
 const PORT = process.env.PORT || 7000;
-// const static_path = path.join(__dirname, "../public");
+const static_path = path.join(__dirname, "../public");
 
-// app.use(express.static(static_path));
+app.use(express.static(static_path));
 
 const MONGOURL = process.env.MONGO_URL;
 
@@ -24,7 +27,7 @@ const userSchema = new mongoose.Schema({
     age: Number,
 });
 
-const userModel = mongoose.model("users", userSchema)
+const userModel = mongoose.model("users", userSchema);
 
 app.get("/getUsers", async(req, res) =>{
     const userData = await userModel.find();
