@@ -1,33 +1,19 @@
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import express from "express";
-import path from "path"
+const express = require("express");
+const path = require("path");
 const app = express();
-dotenv.config();
+require("./db/conn");
 
-const PORT = process.env.PORT || 7000;
-// const static_path = path.join(__dirname, "../public");
+const port = process.env.PORT || 7000;
+const static_path = path.join(__dirname, "../public");
 
-// app.use(express.static(static_path));
+app.use(express.static(static_path));
+app.set("view engine", "hbs");
+app.set("views", path.join(__dirname, "../views"));
 
-const MONGOURL = process.env.MONGO_URL;
-
-mongoose.connect(MONGOURL).then(()=>{
-    console.log("Database base is connected");
-    app.listen(PORT, ()=>{
-        console.log(`server is running on port ${PORT}`);
-    });
-}) .catch((error)=> console.log(error));
-
-const userSchema = new mongoose.Schema({
-    name: String,
-    age: Number,
+app.get("/", (req, res) => {
+    res.render("index")
 });
 
-const userModel = mongoose.model("users", userSchema)
-
-app.get("/getUsers", async(req, res) =>{
-    const userData = await userModel.find();
-    res.json(userData);
-});
-
+app.listen(port, () =>{
+    console.log(`server is running on port no ${port}`);
+})
