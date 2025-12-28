@@ -398,7 +398,7 @@ function initializeLogin() {
                 saveToStorage('user', { username: username });
                 showMessage('Login successful! Redirecting...', 'success');
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    window.location.href = 'run.html';
                 }, 1000);
             
             } else {
