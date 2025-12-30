@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriSmart - A Farmer Security Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container">
+            <h1 class="logo">AgriSmart<i class="fas fa-shield-alt"></i></h1>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#dashboard" class="nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#biosecurity" class="nav-link"><i class="fas fa-biohazard"></i> Biosecurity</a></li>
+                    <li><a href="#records" class="nav-link"><i class="fas fa-book"></i> Records</a></li>
+                    <li><a href="#alerts" class="nav-link"><i class="fas fa-bell"></i> Alerts</a></li>
+                    <li><a href="#fertilizer" class="nav-link"><i class="fas fa-seedling"></i> Fertilizer</a></li>
+                    <li><a href="#" id="logout-btn" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="dashboard" class="module-section visible">
+            <div class="container">
+                <h2>Your Farm Dashboard</h2>
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h3>Overall Biosecurity Score</h3>
+                        <div class="score-container">
+                            <span id="biosecurity-score" class="score-display">--</span>
+                        </div>
+                        <p class="score-message"></p>
+                    </div>
+                    <div class="card card-alerts">
+                        <h3>Latest Alerts</h3>
+                        <ul id="alert-list" class="alert-list">
+                            <li>No new alerts.</li>
+                        </ul>
+                    </div>
+                    <div class="card card-tasks">
+                        <h3>Upcoming Tasks</h3>
+                        <ul id="task-list" class="task-list">
+                            <li><i class="fas fa-check-circle"></i> Clean and disinfect entry points.</li>
+                            <li><i class="fas fa-check-circle"></i> Update animal count.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="biosecurity" class="module-section hidden">
+            <div class="container">
+                <h2>Biosecurity Management</h2>
+                <div class="content-box">
+                    <h3>Risk Assessment Tool</h3>
+                    <p>Answer a few questions to get your personalized biosecurity score and recommendations.</p>
+                    <form id="risk-assessment-form">
+                        <div class="form-group">
+                            <label for="fencing">Is your farm perimeter securely fenced?</label>
+                            <select id="fencing" name="fencing" required>
+                                <option value="">Select one</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quarantine">Do you quarantine new animals for at least 30 days?</label>
+                            <select id="quarantine" name="quarantine" required>
+                                <option value="">Select one</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn primary-btn">Calculate Score</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="records" class="module-section hidden">
+            <div class="container">
+                <h2>Digital Record Keeping</h2>
+                <div class="content-box">
+                    <h3>Biosecurity Logbook</h3>
+                    <p>Keep a digital record of all your biosecurity activities and track your farm's health over time.</p>
+
+                    <div class="records-grid">
+                        <div class="record-card">
+                            <h4><i class="fas fa-plus-circle"></i> Add New Entry</h4>
+                            <p>Log daily biosecurity activities</p>
+                            <button class="btn secondary-btn">Add Entry</button>
+                        </div>
+
+                        <div class="record-card">
+                            <h4><i class="fas fa-chart-line"></i> View Reports</h4>
+                            <p>Analyze trends and generate reports</p>
+                            <button class="btn secondary-btn">View Reports</button>
+                        </div>
+
+                        <div class="record-card">
+                            <h4><i class="fas fa-download"></i> Export Data</h4>
+                            <p>Download records for compliance</p>
+                            <button class="btn secondary-btn">Export</button>
+                        </div>
+                    </div>
+
+                    <div class="recent-entries">
+                        <h4>Recent Entries</h4>
+                        <div class="entry-list">
+                            <div class="entry-item">
+                                <div class="entry-date">Today</div>
+                                <div class="entry-content">
+                                    <strong>Perimeter Check</strong> - All fences secure, no breaches detected.
+                                </div>
+                            </div>
+                            <div class="entry-item">
+                                <div class="entry-date">Yesterday</div>
+                                <div class="entry-content">
+                                    <strong>Equipment Sanitization</strong> - All feeding equipment cleaned and disinfected.
+                                </div>
+                            </div>
+                            <div class="entry-item">
+                                <div class="entry-date">2 days ago</div>
+                                <div class="entry-content">
+                                    <strong>Visitor Log</strong> - Veterinarian visit, full PPE protocol followed.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="alerts" class="module-section hidden">
+            <div class="container">
+                <h2>Alerts & Notifications</h2>
+                <div class="content-box">
+                    <h3>Real-time Updates</h3>
+                    <p>Get instant alerts on disease outbreaks and recommended actions in your area.</p>
+
+                    <div class="alert-controls">
+                        <div class="alert-stats">
+                            <div class="stat-item">
+                                <span class="stat-number" id="high-alerts">2</span>
+                                <span class="stat-label">High Priority</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="medium-alerts">1</span>
+                                <span class="stat-label">Medium Priority</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="resolved-alerts">5</span>
+                                <span class="stat-label">Resolved</span>
+                            </div>
+                        </div>
+
+                        <div class="alert-filters">
+                            <button class="btn secondary-btn active" data-filter="all">All Alerts</button>
+                            <button class="btn secondary-btn" data-filter="high">High Priority</button>
+                            <button class="btn secondary-btn" data-filter="medium">Medium Priority</button>
+                        </div>
+                    </div>
+
+                    <div class="alerts-list">
+                        <div class="alert-item high">
+                            <div class="alert-header">
+                                <div class="alert-title">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Disease Outbreak Alert
+                                </div>
+                                <div class="alert-priority high">High</div>
+                            </div>
+                            <div class="alert-content">
+                                <p>Foot-and-mouth disease outbreak reported in neighboring county. Implement immediate quarantine protocols.</p>
+                                <div class="alert-meta">
+                                    <span class="alert-date"><i class="fas fa-calendar"></i> Today, 2:30 PM</span>
+                                    <span class="alert-source"><i class="fas fa-map-marker-alt"></i> County Health Department</span>
+                                </div>
+                            </div>
+                            <div class="alert-actions">
+                                <button class="btn primary-btn">View Details</button>
+                                <button class="btn secondary-btn">Mark Resolved</button>
+                            </div>
+                        </div>
+
+                        <div class="alert-item medium">
+                            <div class="alert-header">
+                                <div class="alert-title">
+                                    <i class="fas fa-cloud-rain"></i>
+                                    Weather Advisory
+                                </div>
+                                <div class="alert-priority medium">Medium</div>
+                            </div>
+                            <div class="alert-content">
+                                <p>Heavy rainfall expected. Increased risk of waterborne disease transmission. Check drainage systems.</p>
+                                <div class="alert-meta">
+                                    <span class="alert-date"><i class="fas fa-calendar"></i> Yesterday, 8:00 AM</span>
+                                    <span class="alert-source"><i class="fas fa-satellite-dish"></i> Weather Service</span>
+                                </div>
+                            </div>
+                            <div class="alert-actions">
+                                <button class="btn primary-btn">View Details</button>
+                                <button class="btn secondary-btn">Mark Resolved</button>
+                            </div>
+                        </div>
+
+                        <div class="alert-item resolved">
+                            <div class="alert-header">
+                                <div class="alert-title">
+                                    <i class="fas fa-check-circle"></i>
+                                    Vaccination Reminder
+                                </div>
+                                <div class="alert-priority resolved">Resolved</div>
+                            </div>
+                            <div class="alert-content">
+                                <p>Annual livestock vaccination schedule due. Contact veterinarian to schedule appointments.</p>
+                                <div class="alert-meta">
+                                    <span class="alert-date"><i class="fas fa-calendar"></i> 3 days ago</span>
+                                    <span class="alert-source"><i class="fas fa-user-md"></i> System Reminder</span>
+                                </div>
+                            </div>
+                            <div class="alert-actions">
+                                <button class="btn secondary-btn resolved">Resolved</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- <section id="fertilizer" class="module-section hidden">
+            <div class="container">
+                <h2>Fertilizer Recommendation</h2>
+                <div class="content-box">
+                    <form id="fertilizer-form">
+                        <div class="form-group">
+                            <label for="soil-type">Type of Soil:</label>
+                            <select id="soil-type" name="soil-type" required>
+                                <option value="" disabled selected>Select soil type</option>
+                                <option value="clay">Clay</option>
+                                <option value="sandy">Sandy</option>
+                                <option value="loamy">Loamy</option>
+                                <option value="silty">Silty</option>
+                                <option value="peaty">Peaty</option>
+                                <option value="chalky">Chalky</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="moisture-content">Moisture Content:</label>
+                            <select id="moisture-content" name="moisture-content" required>
+                                <option value="" disabled selected>Select moisture level</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="crop-type">Type of Crop:</label>
+                            <select id="crop-type" name="crop-type" required>
+                                <option value="" disabled selected>Select crop type</option>
+                                <option value="cereal">Cereal</option>
+                                <option value="vegetable">Vegetable</option>
+                                <option value="fruit">Fruit</option>
+                                <option value="legume">Legume</option>
+                                <option value="root">Root</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn primary-btn">Get Recommendation</button>
+                    </form>
+                    <div id="fertilizer-result" class="recommendation-result"></div>
+                </div>
+            </div>
+        </section> -->
+        <section id="fertilizer" class="module-section hidden">
+    <div class="container">
+        <h2>AI-Powered Fertilizer Recommendation</h2>
+        <div class="content-box">
+            <form id="fertilizer-form">
+                <div class="form-group">
+                    <label for="nitrogen">Nitrogen (N) Level (kg/ha):</label>
+                    <input type="number" id="nitrogen" name="nitrogen" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="phosphorus">Phosphorus (P) Level (kg/ha):</label>
+                    <input type="number" id="phosphorus" name="phosphorus" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="potassium">Potassium (K) Level (kg/ha):</label>
+                    <input type="number" id="potassium" name="potassium" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="temperature">Temperature (°C):</label>
+                    <input type="number" id="temperature" name="temperature" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="humidity">Humidity (%):</label>
+                    <input type="number" id="humidity" name="humidity" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="ph">Soil pH:</label>
+                    <input type="number" id="ph" name="ph" step="0.1" min="0" max="14" required>
+                </div>
+                <div class="form-group">
+                    <label for="rainfall">Rainfall (mm):</label>
+                    <input type="number" id="rainfall" name="rainfall" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="crop-type">Crop Type:</label>
+                    <select id="crop-type" name="crop-type" required>
+                        <option value="" disabled selected>Select crop type</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="soil-type">Soil Type:</label>
+                    <select id="soil-type" name="soil-type" required>
+                        <option value="" disabled selected>Select soil type</option>
+                        <option value="clay">Clay</option>
+                        <option value="sandy">Sandy</option>
+                        <option value="loamy">Loamy</option>
+                        <option value="silty">Silty</option>
+                        <option value="peaty">Peaty</option>
+                        <option value="chalky">Chalky</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn primary-btn">Get AI Recommendation</button>
+            </form>
+            <div id="fertilizer-result" class="recommendation-result"></div>
+        </div>
+    </div>
+</section>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 AgriSmart. Empowering farmers with professionals knowledge.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+<script>
+    const isLoggedIn = localStorage.getItem("farmshield_isLoggedIn");
+    const user = localStorage.getItem("farmshield_user");
+
+    if (isLoggedIn !== "true" || !user) {
+        // Not logged in → go back to login page
+        window.location.href = "login.html";
+    }
+</script>

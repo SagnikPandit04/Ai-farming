@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AgriSmart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            color: #2e7d32;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: #4caf50;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .login-message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .login-message.error {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            display: block;
+        }
+
+        .login-message.success {
+            background: #d1fae5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+            display: block;
+        }
+
+        .demo-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0fdf4;
+            border-radius: 8px;
+            border-left: 4px solid #2e7d32;
+            text-align: left;
+        }
+
+        .demo-info p {
+            margin: 8px 0;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .demo-info strong {
+            color: #2e7d32;
+        }
+
+        .demo-info code {
+            background: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #2e7d32;
+            font-weight: 600;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <h1 class="logo">
+                <i class="fas fa-leaf"></i>
+                AgriSmart
+            </h1>
+            <p class="subtitle">AI-Powered Precision Farming & Fertilizer Optimizer</p>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">
+                        <i class="fas fa-user"></i> Username
+                    </label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        placeholder="Enter your username"
+                        required
+                        autocomplete="username"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Enter your password"
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <button type="submit" class="btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+
+                <div id="login-message" class="login-message"></div>
+            </form>
+
+            <div class="demo-info">
+                <p><strong>Demo Credentials:</strong></p>
+                <p>Username: <code>farmer</code></p>
+                <p>Password: <code>password</code></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple login functionality
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const messageDiv = document.getElementById('login-message');
+            
+            if (username === 'farmer' && password === 'password') {
+                // Save to localStorage
+                localStorage.setItem('farmshield_isLoggedIn', 'true');
+                localStorage.setItem('farmshield_user', JSON.stringify({username: username}));
+                
+                // Show success message
+                messageDiv.textContent = 'Login successful! Redirecting...';
+                messageDiv.className = 'login-message success';
+                
+                // Redirect to dashboard
+                setTimeout(() => {
+                    window.location.href = 'run.html';
+                }, 1000);
+            } else {
+                // Show error message
+                messageDiv.textContent = 'Invalid username or password. Please try again.';
+                messageDiv.className = 'login-message error';
+            }
+        });
+
+        console.log('Login page loaded successfully!');
+    </script>
+</body>
+</html>
+```
+
+<!-- ## **Step 5: Verify Your Folder Structure**
+
+Open File Explorer and navigate to:
+```
+D:\former\former\AI-Fertilizer-Optimizer\
+```
+
+You should see:
+```
+├── backend/
+├── front end/  (or frontend/)
+```
+
+Inside `front end/`, you should have:
+```
+├── login.html
+├── login_new.html  (the file we just created)
+├── run.html
+├── style.css
+├── script.js -->
