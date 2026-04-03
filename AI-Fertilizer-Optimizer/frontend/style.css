@@ -8,11 +8,11 @@
     --background-color: #efeee3;
     --surface-color: #ffffff;
     --card-bg: #f9f9f9;
-    --text-color: #2c3e50;
+    --text-color: #050922;
     --text-secondary: #5a6c7d;
     --border-color: #0b0b0b;
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
-    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.5);
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
     --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
     --border-radius: 12px;
     --border-radius-sm: 8px;
@@ -47,7 +47,7 @@ body {
     font-family: 'Roboto', sans-serif;
     line-height: 1.6;
     color: var(--text-color);
-    background-image: linear-gradient(rgba(239, 238, 227, 0.5), rgba(239, 238, 227, 0.5)),
+    background-image: linear-gradient(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15)),
                           url('farm-background.jpg');
     background-size: cover;
     background-position: center;
@@ -905,7 +905,7 @@ body {
     align-items: center;
     justify-content: center;
     background-image: linear-gradient(rgba(46, 125, 50, 0.2), rgba(27, 94, 32, 0.2)), 
-                      url('farm-background.jpg');
+                      url('biosecurity.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

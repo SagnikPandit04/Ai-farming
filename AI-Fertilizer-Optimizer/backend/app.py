@@ -1,5 +1,5 @@
 # app.py - Main Flask Application for AI-Powered Fertilizer Optimizer
-
+import bcrypt 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -17,7 +17,8 @@ CORS(app)  # Enable CORS for frontend communication
 
 # MongoDB Connection
 try:
-    client = MongoClient('mongodb://localhost:27017/')
+    MONGO_URI = "mongodb+srv://agrismart_user:##assassin1234@agrismart.e64zrm5.mongodb.net/?appName=AgriSmart"
+    client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
     db = client['dbconnect']  # Your existing database name
     
     # Collections
@@ -175,18 +176,20 @@ def register_user():
     """Register a new user"""
     try:
         data = request.json
-        username = data.get('username')
-        password = data.get('password')  # In production, hash this!
-        email = data.get('email')
+        username = data.get('username').strip()
+        password = data.get('password').strip()  # In production, hash this!
+        email = data.get('email').strip()
         
         # Check if user exists
         if users_collection.find_one({'username': username}):
             return jsonify({'error': 'Username already exists'}), 400
         
+        hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        
         # Create user
         user = {
             'username': username,
-            'password': password,  # Hash in production!
+            'password': hashed.decode('utf-8'),  # Hash in production!
             'email': email,
             'created_at': datetime.now(),
             'role': 'farmer'
@@ -207,25 +210,81 @@ def login():
     """User login"""
     try:
         data = request.json
-        username = data.get('username')
-        password = data.get('password')
-        
-        user = users_collection.find_one({
-            'username': username,
-            'password': password  # Use hashed comparison in production!
-        })
-        
-        if user:
-            return jsonify({
-                'message': 'Login successful',
+        username = data.get('username', '').strip()
+        password = data.get('password', '').strip()
+        ip = request.remote_addr
+        agent = request.user_agent.string
+
+        if not username or not password:
+            return jsonify({'error': 'Username and password are required'}), 400
+
+        user = users_collection.find_one({'username': username})
+
+        if not user:
+            # Log failed attempt
+            db['login_logs'].insert_one({
                 'username': username,
-                'role': user.get('role', 'farmer')
-            }), 200
-        else:
+                'status': 'failed',
+                'reason': 'user not found',
+                'ip': ip,
+                'agent': agent,
+                'timestamp': datetime.now()
+            })
             return jsonify({'error': 'Invalid credentials'}), 401
-            
+
+        # Compare hashed password
+        # if not bcrypt.checkpw(password.encode('utf-8'), user['password']):
+
+        stored_password = user['password']
+        if isinstance(stored_password, str):
+         stored_password = stored_password.encode('utf-8')
+        if not bcrypt.checkpw(password.encode('utf-8'), stored_password):
+            db['login_logs'].insert_one({
+                'username': username,
+                'status': 'failed',
+                'reason': 'wrong password',
+                'ip': ip,
+                'agent': agent,
+                'timestamp': datetime.now()
+            })
+            return jsonify({'error': 'Invalid credentials'}), 401
+
+        #  Login success — log it
+        db['login_logs'].insert_one({
+            'username': username,
+            'user_id': str(user['_id']),
+            'status': 'success',
+            'ip': ip,
+            'agent': agent,
+            'timestamp': datetime.now()
+        })
+
+        return jsonify({
+            'message': 'Login successful',
+            'username': username,
+            'role': user.get('role', 'farmer'),
+            'email': user.get('email', '')
+        }), 200
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+    #     user = users_collection.find_one({
+    #         'username': username,
+    #         'password': password  # Use hashed comparison in production!
+    #     })
+        
+    #     if user:
+    #         return jsonify({
+    #             'message': 'Login successful',
+    #             'username': username,
+    #             'role': user.get('role', 'farmer')
+    #         }), 200
+    #     else:
+    #         return jsonify({'error': 'Invalid credentials'}), 401
+            
+    # except Exception as e:
+    #     return jsonify({'error': str(e)}), 500
 
 @app.route('/api/fertilizer/recommend', methods=['POST'])
 def recommend_fertilizer():
