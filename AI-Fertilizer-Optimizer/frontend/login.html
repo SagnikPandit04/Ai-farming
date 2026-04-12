@@ -341,7 +341,7 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    showMessage('register-message', '✓ Account created! You can now log in.', 'success');
+                    showMessage('register-message', '✓ Account created! Please Check your email to verify before logging in.', 'success');
                     document.getElementById('register-form').reset();
                     setTimeout(() => switchTab('login'), 1500);
                 } else {

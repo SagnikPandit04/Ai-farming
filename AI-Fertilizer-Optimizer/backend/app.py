@@ -1,4 +1,8 @@
 # app.py - Main Flask Application for AI-Powered Fertilizer Optimizer
+import smtplib
+import secrets
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import bcrypt 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -11,6 +15,14 @@ from sklearn.preprocessing import LabelEncoder
 import pickle
 import os
 from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
+
+GMAIL_USERNAME = os.getenv("GMAIL_USERNAME")
+GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD")
+
+
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend communication
@@ -29,6 +41,38 @@ try:
     print("✓ Connected to MongoDB successfully!")
 except Exception as e:
     print(f"✗ MongoDB connection error: {e}")
+
+
+# Email sending:::::::::::::
+
+def send_verification_email(to_email, username, token):
+    verify_link = f"http://127.0.0.1:5000/api/verify-email?token={token}"
+
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = "Verify your account"
+    msg["From"] = GMAIL_USERNAME
+    msg["To"] = to_email
+
+    html = f"""
+    <html><body>
+      <h2>Welcome to AgriSmart, {username}!</h2>
+      <p>Click the button below to verify your email address:</p>
+      <a href="{verify_link}" style="background:#2e7d32;color:white;padding:12px 24px;
+         border-radius:8px;text-decoration:none;display:inline-block;">
+         Verify My Email
+      </a>
+      <p>This link expires in <strong>24 hours</strong>.</p>
+      <p>If you didn't register, ignore this email.</p>
+    </body></html>
+    """
+    msg.attach(MIMEText(html, "html"))
+
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls()
+        server.login(GMAIL_USERNAME, GMAIL_PASSWORD)
+        server.sendmail(GMAIL_USERNAME, to_email, msg.as_string())
+
+
 
 # Global variables for ML model
 model = None
@@ -162,6 +206,7 @@ def load_model():
 
 # ==================== API ENDPOINTS ====================
 
+
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""
@@ -185,6 +230,9 @@ def register_user():
             return jsonify({'error': 'Username already exists'}), 400
         
         hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+        token = secrets.token_urlsafe(32)
+        token_expiry = datetime.now().timestamp() + 86400 # 24 hours in seconds
         
         # Create user
         user = {
@@ -192,10 +240,15 @@ def register_user():
             'password': hashed.decode('utf-8'),  # Hash in production!
             'email': email,
             'created_at': datetime.now(),
-            'role': 'farmer'
+            'role': 'farmer',
+            'is_verified': False,
+            'verification_token': token,
+            'token_expires_at': token_expiry
         }
         
         users_collection.insert_one(user)
+
+        send_verification_email(email, username, token)
         
         return jsonify({
             'message': 'User registered successfully',
@@ -204,6 +257,43 @@ def register_user():
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/api/verify-email', methods=['GET'])
+def verify_email():
+
+    token = request.args.get('token')
+    
+    if not token:
+        return "INVALID!!", 400
+
+    user = users_collection.find_one({'verification_token': token})
+
+    if not user:
+        return "INVALID!!", 400
+    
+    if datetime.now().timestamp()>user['token_expires_at']:
+        return "LINK EXPIRED. Please register again.", 400
+    
+
+    users_collection.update_one(
+        {'_id': user['_id']},
+
+        {
+            '$set': {'is_verified': True}, 
+            '$unset':{'verification_token':'', 'token_expires_at':''}}
+    )
+
+    return """
+    <html><body style="font-family:sans-serif; text-align:center; padding:60px">
+       <h2 style ="color:#2e7d32"> Email Verified successfully! </h2>
+       <p> Your account is now active.</p>
+       <a href="http://127.0.0.1:5500/login.html"
+          styel ="background-colour:#2e7d32;color:white;padding:12px 24px;border-radius:8px;text-decoration:none">
+          Go to login
+          </a>
+          </body></html>
+          """, 200
+
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -220,6 +310,9 @@ def login():
 
         user = users_collection.find_one({'username': username})
 
+        if user and not user.get('is_verified', False):
+            return jsonify({'error': 'Please verify your email before logging in'}), 403
+
         if not user:
             # Log failed attempt
             db['login_logs'].insert_one({
@@ -231,6 +324,9 @@ def login():
                 'timestamp': datetime.now()
             })
             return jsonify({'error': 'Invalid credentials'}), 401
+        
+        if not user.get('is_verified', False):
+         return jsonify({'error': 'Please verify your email before logging in'}), 403
 
         # Compare hashed password
         # if not bcrypt.checkpw(password.encode('utf-8'), user['password']):
