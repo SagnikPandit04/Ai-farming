@@ -46,7 +46,7 @@ except Exception as e:
 # Email sending:::::::::::::
 
 def send_verification_email(to_email, username, token):
-    verify_link = f"https://agrismart-backend.onrender.com/api/verify-email?token={token}"
+    verify_link = f"https://ai-farming-x.onrender.com/api/verify-email?token={token}"
     msg = MIMEMultipart("alternative")
     msg["Subject"] = "Verify your account"
     msg["From"] = GMAIL_USERNAME
