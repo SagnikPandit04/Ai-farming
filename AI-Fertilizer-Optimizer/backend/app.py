@@ -245,9 +245,13 @@ def register_user():
             'token_expires_at': token_expiry
         }
         
+        try:
+            send_verification_email(email, username, token)
+        except Exception as email_error:
+            return jsonify({'error':'failed to send verification mail'}), 500
         users_collection.insert_one(user)
 
-        send_verification_email(email, username, token)
+        
         
         return jsonify({
             'message': 'User registered successfully',
