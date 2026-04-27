@@ -512,23 +512,34 @@ document.addEventListener("DOMContentLoaded", () => {
     // Navbar navigation
     document.querySelectorAll(".nav-link").forEach(link => {
         link.addEventListener("click", e => {
+            const href = this.getAttribute('href');
+
+            // only handles internal section links
+
+            if (!href || !href.startsWith('#')) return;
+
             e.preventDefault();
+            const targetId = href.replace('#', '');
 
-            const targetId = link.getAttribute("href").replace("#", "");
-            const targetSection = document.getElementById(targetId);
-
-            if (!targetSection) return;
-
-            document.querySelectorAll(".module-section").forEach(sec => {
-                sec.classList.add("hidden");
-                sec.classList.remove("visible");
+            // hinding all sections
+            document.querySelectorAll('.module-section').forEach(section => {
+                section.classList.remove('visible');
+                section.classList.add('hidden');
             });
 
-            targetSection.classList.remove("hidden");
-            targetSection.classList.add("visible");
-
+            // show the target section
+            const target = document.getElementById(targetId);
+            if (target){
+                target.classList.remove("hidden");
+                target.classList.add("visible");
+            }
+            
+            // update active nav link
             document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
             link.classList.add("active");
+
+            // scroll to top
+            window.scrollTo({top:0, behavior:"smooth"});
         });
     });
 });
