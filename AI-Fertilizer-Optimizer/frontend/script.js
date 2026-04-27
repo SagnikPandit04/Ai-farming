@@ -512,7 +512,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Navbar navigation
     document.querySelectorAll(".nav-link").forEach(link => {
         link.addEventListener("click", e => {
-            const href = this.getAttribute('href');
+            const href = link.getAttribute('href');
 
             // only handles internal section links
 
