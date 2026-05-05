@@ -25,7 +25,8 @@ GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD")
 
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend communication
+CORS(app, origins=["https://ai-farming-x.netlify.app"],
+supports_credentials=True)  # Enable CORS for frontend communication
 
 # MongoDB Connection
 try:
