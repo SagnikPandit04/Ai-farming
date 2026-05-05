@@ -543,6 +543,7 @@ def retrain_model():
         return jsonify({'error': str(e)}), 500
 
 # ==================== INITIALIZE APP ====================
+load_model()
 
 if __name__ == '__main__':
     print("="*50)
@@ -550,7 +551,6 @@ if __name__ == '__main__':
     print("="*50)
     
     # Load or train model
-    load_model()
     
     # Start Flask app
     print("\n✓ Starting Flask server...")
