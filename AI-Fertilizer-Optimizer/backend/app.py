@@ -226,7 +226,11 @@ def health_check():
 def register_user():
     """Register a new user"""
     try:
-        data = request.json
+        data = request.get_json()
+
+        if not data:
+            return jsonify({'error:': 'Invalid JOSN'}), 400
+        
         username = data.get('username').strip()
         password = data.get('password').strip()  # In production, hash this!
         email = data.get('email').strip()
