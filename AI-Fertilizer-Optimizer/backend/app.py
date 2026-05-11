@@ -1,8 +1,6 @@
 # app.py - Main Flask Application for AI-Powered Fertilizer Optimizer
-import smtplib
+import resend
 import secrets
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 import bcrypt 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -19,10 +17,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-GMAIL_USERNAME = os.getenv("GMAIL_USERNAME")
-GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD")
+# GMAIL_USERNAME = os.getenv("GMAIL_USERNAME")
+# GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD")
 
-
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+resend.api_key = RESEND_API_KEY
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -36,7 +35,7 @@ def after_request(response):
 
 # MongoDB Connection
 try:
-    MONGO_URI = "mongodb+srv://agrismart_user:##assassin1234@agrismart.e64zrm5.mongodb.net/?appName=AgriSmart"
+    MONGO_URI = "mongodb+srv://agrismart_user:%23%23assassin1234@agrismart.e64zrm5.mongodb.net/?appName=AgriSmart"
     client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
     db = client['dbconnect']  # Your existing database name
     
@@ -54,23 +53,29 @@ except Exception as e:
 
 def send_verification_email(to_email, username, token):
     verify_link = f"https://ai-farming-x.onrender.com/api/verify-email?token={token}"
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = "Verify your account"
-    msg["From"] = GMAIL_USERNAME
-    msg["To"] = to_email
+    
 
-    html = f"""
-    <html><body>
-      <h2>Welcome to AgriSmart, {username}!</h2>
-      <p>Click the button below to verify your email address:</p>
-      <a href="{verify_link}" style="background:#2e7d32;color:white;padding:12px 24px;
-         border-radius:8px;text-decoration:none;display:inline-block;">
-         Verify My Email
-      </a>
-      <p>This link expires in <strong>24 hours</strong>.</p>
-      <p>If you didn't register, ignore this email.</p>
-    </body></html>
-    """
+    resend.Emails.send({
+        "from": "onboarding@resend.dev",
+        "to": to_email,
+        "subject": "Verify your AgriSmart account",
+        "html": f"""
+        <h2>Welcome to AgriSmart, {username}!</h2>
+
+        <p>Click below to verify your email:</p>
+
+        <a href="{verify_link}"
+           style="background:#2e7d32;
+                  color:white;
+                  padding:12px 24px;
+                  text-decoration:none;
+                  border-radius:8px;">
+           Verify Email
+        </a>
+
+        <p>This link expires in 24 hours.</p>
+        """
+})
     msg.attach(MIMEText(html, "html"))
 
     with smtplib.SMTP("smtp.gmail.com", 587) as server:
