@@ -265,7 +265,7 @@ def register_user():
             send_verification_email(email, username, token)
         except Exception as email_error:
          print("EMAIL ERROR:", email_error)
-        return jsonify({'error': str(email_error)}), 500
+         return jsonify({'error': str(email_error)}), 500
         users_collection.insert_one(user)
 
         
