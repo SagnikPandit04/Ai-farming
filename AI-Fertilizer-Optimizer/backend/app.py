@@ -76,12 +76,12 @@ def send_verification_email(to_email, username, token):
         <p>This link expires in 24 hours.</p>
         """
 })
-    msg.attach(MIMEText(html, "html"))
+    # msg.attach(MIMEText(html, "html"))
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as server:
-        server.starttls()
-        server.login(GMAIL_USERNAME, GMAIL_PASSWORD)
-        server.sendmail(GMAIL_USERNAME, to_email, msg.as_string())
+    # with smtplib.SMTP("smtp.gmail.com", 587) as server:
+    #     server.starttls()
+    #     server.login(GMAIL_USERNAME, GMAIL_PASSWORD)
+    #     server.sendmail(GMAIL_USERNAME, to_email, msg.as_string())
 
 
 
@@ -264,7 +264,8 @@ def register_user():
         try:
             send_verification_email(email, username, token)
         except Exception as email_error:
-            return jsonify({'error':'failed to send verification mail'}), 500
+         print("EMAIL ERROR:", email_error)
+        return jsonify({'error': str(email_error)}), 500
         users_collection.insert_one(user)
 
         
