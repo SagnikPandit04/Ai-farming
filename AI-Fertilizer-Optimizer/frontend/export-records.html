@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Export Health Records</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: #f4f7f4;
+        }
+
+        .export-container{
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h1{
+            color: #2e7d32;
+            margin-bottom: 20px;
+        }
+
+        table{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th,
+        table td{
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        table th{
+            background: #2e7d32;
+            color: white;
+        }
+
+        .download-btn{
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="export-container">
+
+        <h1>Previous Health Records</h1>
+
+        <button class="btn primary-btn download-btn" onclick="downloadSelectedCSV()">
+            Download Selected CSV
+        </button>
+
+        <table id="records-table">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Animal ID</th>
+                    <th>Vet Name</th>
+                    <th>Date</th>
+                    <th>Diagnosis</th>
+                    <th>Medication</th>
+                </tr>
+            </thead>
+
+            <tbody id="records-body">
+
+            </tbody>
+        </table>
+
+    </div>
+
+<script>
+
+const API_BASE = 'https://ai-farming-x.onrender.com/api';
+
+async function loadRecords(){
+
+    try{
+
+        const response = await fetch(`${API_BASE}/health-records`);
+
+        const records = await response.json();
+
+        const tableBody = document.getElementById('records-body');
+
+        tableBody.innerHTML = '';
+
+        records.forEach(record => {
+
+           const row = `
+           <tr>
+               <td>
+                   <input
+                       type="checkbox"
+                       class="record-checkbox"
+                       data-animal="${record.animal_id || ''}"
+                       data-vet="${record.vet_name || ''}"
+                       data-date="${record.visit_date || ''}"
+                       data-diagnosis="${record.diagnosis || ''}"
+                       data-medication="${record.medication || ''}"
+               >
+               </td>
+
+    <td>${record.animal_id || ''}</td>
+    <td>${record.vet_name || ''}</td>
+    <td>${record.visit_date || ''}</td>
+    <td>${record.diagnosis || ''}</td>
+    <td>${record.medication || ''}</td>
+</tr>
+`;
+
+            tableBody.innerHTML += row;
+        });
+
+    }catch(error){
+
+        console.error(error);
+        alert('Failed to load records');
+
+    }
+}
+
+function downloadSelectedCSV(){
+
+    const selectedRecords = document.querySelectorAll('.record-checkbox:checked');
+
+    if(selectedRecords.length === 0){
+
+        alert("Please select at least one record");
+
+        return;
+    }
+
+    let csv = [];
+
+    csv.push("Animal ID,Vet Name,Visit Date,Diagnosis,Medication");
+
+    selectedRecords.forEach(record => {
+
+        const row = [
+            record.dataset.animal,
+            record.dataset.vet,
+            record.dataset.date,
+            record.dataset.diagnosis,
+            record.dataset.medication
+        ];
+
+        csv.push(row.join(","));
+    });
+
+    const csvFile = new Blob([csv.join("\n")], {
+        type: "text/csv"
+    });
+
+    const downloadLink = document.createElement("a");
+
+    downloadLink.download = "selected_health_records.csv";
+
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+
+    downloadLink.style.display = "none";
+
+    document.body.appendChild(downloadLink);
+
+    downloadLink.click();
+}
+
+// function downloadCSV(){
+
+//     let table = document.getElementById("records-table");
+
+//     let rows = table.querySelectorAll("tr");
+
+//     let csv = [];
+
+//     rows.forEach(row => {
+
+//         let cols = row.querySelectorAll("td, th");
+
+//         let rowData = [];
+
+//         cols.forEach(col => rowData.push(col.innerText));
+
+//         csv.push(rowData.join(","));
+//     });
+
+//     let csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
+
+//     let downloadLink = document.createElement("a");
+
+//     downloadLink.download = "health_records.csv";
+
+//     downloadLink.href = window.URL.createObjectURL(csvFile);
+
+//     downloadLink.style.display = "none";
+
+//     document.body.appendChild(downloadLink);
+
+//     downloadLink.click();
+// }
+
+loadRecords();
+
+</script>
+
+</body>
+</html>

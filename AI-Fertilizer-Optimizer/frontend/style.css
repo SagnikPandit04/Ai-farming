@@ -21,7 +21,7 @@
 
 /* Loading animation */
 body {
-    opacity: 0;
+    opacity: 2;
     transition: opacity 0.5s ease-in-out;
 }
 
@@ -1024,4 +1024,19 @@ body {
     .btn {
         display: none !important;
     }
+}
+
+
+.report-card{
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    margin-bottom:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    border-left:6px solid #4caf50;
+}
+
+.report-card h3{
+    color:#2e7d32;
+    margin-bottom:10px;
 }

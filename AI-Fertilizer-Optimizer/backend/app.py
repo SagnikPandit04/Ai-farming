@@ -26,23 +26,24 @@ resend.api_key = RESEND_API_KEY
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
-    return response  # Enable CORS for frontend communication
+# @app.after_request
+# def after_request(response):
+#     response.headers.add('Access-Control-Allow-Origin', '*')
+#     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+#     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
+#     return response  # Enable CORS for frontend communication
 
 # MongoDB Connection
 try:
     MONGO_URI = "mongodb+srv://agrismart_user:%23%23assassin1234@agrismart.e64zrm5.mongodb.net/?appName=AgriSmart"
     client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
-    db = client['dbconnect']  # Your existing database name
+    db = client['dbconnect']  # existing database name
     
     # Collections
     users_collection = db['users']
     recommendations_collection = db['recommendations']
     soil_data_collection = db['soil_data']
+    health_records_collection = db['health_records']
     
     print("✓ Connected to MongoDB successfully!")
 except Exception as e:
@@ -90,7 +91,7 @@ model = None
 label_encoders = {}
 crop_encoder = None
 
-# ==================== DATA PREPARATION ====================
+#  DATA PREPARATION 
 
 def create_sample_dataset():
     """Create a sample dataset for training if no data exists"""
@@ -558,6 +559,49 @@ def retrain_model():
             
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/health-records', methods=['POST'])
+def save_health_record():
+    try:
+        data = request.get_json()
+
+        record = {
+            'animal_id': data.get('animal_id'),
+            'vet_name': data.get('vet_name'),
+            'visit_date': data.get('visit_date'),
+            'symptoms': data.get('symptoms', []),
+            'temperature': data.get('temperature'),
+            'heart_rate': data.get('heart_rate'),
+            'resp_rate': data.get('resp_rate'),
+            'weight': data.get('weight'),
+            'diagnosis': data.get('diagnosis'),
+            'medication': data.get('medication'),
+            'created_at': datetime.now()
+
+        }
+
+        health_records_collection.insert_one(record)
+
+        return jsonify({
+            'message': 'Record saved'
+        }), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/api/health-records', methods=['GET'])
+def get_health_records():
+    try:
+        records = list(
+            health_records_collection.find({}, {'_id': 0})
+            .sort('created_at', -1)
+        )
+
+        return jsonify(records), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+   
+  
 
 # ==================== INITIALIZE APP ====================
 load_model()

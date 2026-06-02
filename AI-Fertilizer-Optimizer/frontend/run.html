@@ -194,8 +194,8 @@
                     </div>
                 </div>
                 <div class="bs-form-actions" style="margin-top:16px; padding-top:14px;">
-                    <button class="btn primary-btn" style="padding:9px 20px; font-size:0.88rem;">
-                        <i class="fas fa-save"></i> Save
+                    <button id="register-animal-btn" class="btn primary-btn" style="padding: 10px 22px; font-size: 0.9rem;">
+                            <i class="fas fa-save"></i> Save Record
                     </button>
                     <button class="btn secondary-btn" style="padding:9px 20px; font-size:0.88rem;" onclick="document.getElementById('bs-register-form').style.display='none'">
                         Cancel
@@ -243,26 +243,27 @@
                 </div>
             </div>
 
+            <!-- vital signs and id added for quick recognition -->
             <div class="bs-fieldset-label">Vital Signs</div>
             <div class="bs-vitals-row">
                 <div class="bs-vital-box">
                     <span class="bs-vital-label">Temperature</span>
-                    <input type="number" step="0.1" placeholder="38.5">
+                    <input type="number" id="bs-temperature" step="0.1" placeholder="38.5">
                     <div class="bs-vital-unit">°C</div>
                 </div>
                 <div class="bs-vital-box">
                     <span class="bs-vital-label">Heart Rate</span>
-                    <input type="number" placeholder="70">
+                    <input type="number" id ="bs-heart-rate" placeholder="70">
                     <div class="bs-vital-unit">bpm</div>
                 </div>
                 <div class="bs-vital-box">
                     <span class="bs-vital-label">Resp. Rate</span>
-                    <input type="number" placeholder="20">
+                    <input type="number" id = "bs-resp-rate" placeholder="20">
                     <div class="bs-vital-unit">br / min</div>
                 </div>
                 <div class="bs-vital-box">
                     <span class="bs-vital-label">Weight</span>
-                    <input type="number" step="0.1" placeholder="450">
+                    <input type="number" id="bs-weight" step="0.1" placeholder="450">
                     <div class="bs-vital-unit">kg</div>
                 </div>
             </div>
@@ -308,7 +309,7 @@
             
 
             <div class="bs-form-actions">
-                <button class="btn primary-btn" style="padding: 10px 22px; font-size: 0.9rem;">
+                <button id="save-health-record" class="btn primary-btn" style="padding: 10px 22px; font-size: 0.9rem;">
                     <i class="fas fa-save"></i> Save Record
                 </button>
                 <!-- <button class="btn secondary-btn" style="padding: 10px 22px; font-size: 0.9rem;">
@@ -335,19 +336,41 @@
                         <div class="record-card">
                             <h4><i class="fas fa-plus-circle"></i> Add New Entry</h4>
                             <p>Log daily biosecurity activities</p>
-                            <button class="btn secondary-btn">Add Entry</button>
-                        </div>
 
+                            <!--  New button activity added for redirection -->
+                            <button class="btn secondary-btn" onclick="showModule('biosecurity')">
+                                Add Entry
+                            </button>
+                        </div>
+                        <!-- Trying to make the records to get saved inside the reports module -->
+                        
                         <div class="record-card">
                             <h4><i class="fas fa-chart-line"></i> View Reports</h4>
                             <p>Analyze trends and generate reports</p>
-                            <button class="btn secondary-btn">View Reports</button>
+                            
+                            <!-- <div id="reports-container" class="entry-list">
+                                <p>No reports found.</p>
+                            </div> -->
+
+                            <button class="btn secondary-btn"
+                                onclick="window.location.href='reports.html'">
+
+                                View Reports
+
+                            </button>
                         </div>
 
                         <div class="record-card">
                             <h4><i class="fas fa-download"></i> Export Data</h4>
                             <p>Download records for compliance</p>
-                            <button class="btn secondary-btn">Export</button>
+
+                            <!-- Active button added onclick it redirect to export page -->
+                            <button class="btn secondary-btn"
+                                 onclick="window.location.href='export-records.html'">
+
+                                   Export
+
+                            </button>
                         </div>
                     </div>
 
@@ -371,12 +394,47 @@
                                 <div class="entry-content">
                                     <strong>Visitor Log</strong> - Veterinarian visit, full PPE protocol followed.
                                 </div> -->
-                            </div>
+                            </div>  
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+<!-- 
+        <section id="records" class="module-section hidden">
+            <div class="container">
+                <h2>Health Records</h2>
+                <div class="content-box">
+                    <h3>Saved Health Records</h3>
+                    <p style="color:#6b7280; font-size:0.9rem; margin-bottom:20px;">All health records saved from the Biosecurity portal appear here.</p>
+
+                    <div id="records-table-wrap">
+                        <table id="records-table" style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+                            <thead>
+                                <tr style="background:#f3f4f6; text-align:left;">
+                                    <th style="padding:10px 14px; border:1px solid #e5e7eb; color:#6b7280; font-weight:600; text-transform:uppercase; font-size:0.75rem;">Date</th>
+                                    <th style="padding:10px 14px; border:1px solid #e5e7eb; color:#6b7280; font-weight:600; text-transform:uppercase; font-size:0.75rem;">Animal / Flock</th>
+                                    <th style="padding:10px 14px; border:1px solid #e5e7eb; color:#6b7280; font-weight:600; text-transform:uppercase; font-size:0.75rem;">Vet</th>
+                                    <th style="padding:10px 14px; border:1px solid #e5e7eb; color:#6b7280; font-weight:600; text-transform:uppercase; font-size:0.75rem;">Visit Type</th>
+                                    <th style="padding:10px 14px; border:1px solid #e5e7eb; color:#6b7280; font-weight:600; text-transform:uppercase; font-size:0.75rem;">Temp (°C)</th>
+                                    <th style="padding:10px 14px; border:1px solid #e5e7eb; color:#6b7280; font-weight:600; text-transform:uppercase; font-size:0.75rem;">Weight (kg)</th>
+                                    <th style="padding:10px 14px; border:1px solid #e5e7eb; color:#6b7280; font-weight:600; text-transform:uppercase; font-size:0.75rem;">Severity</th>
+                                    <th style="padding:10px 14px; border:1px solid #e5e7eb; color:#6b7280; font-weight:600; text-transform:uppercase; font-size:0.75rem;">Diagnosis</th>
+                                </tr>
+                            </thead>
+                            <tbody id="records-tbody">
+                                <tr id="records-empty-row">
+                                    <td colspan="8" style="padding:30px; text-align:center; color:#9ca3af; border:1px solid #e5e7eb;">
+                                        No records saved yet. Fill a health record in the Biosecurity module and click Save Record.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </section> -->
 
         <section id="alerts" class="module-section hidden">
             <div class="container">
@@ -447,6 +505,7 @@
                             </div>
                             <div class="alert-actions">
                                 <button class="btn primary-btn">View Details</button>
+                                 <!-- <button id="save-health-record" class="btn primary-btn"></button> -->
                                 <button class="btn secondary-btn">Mark Resolved</button>
                             </div>
                         </div>

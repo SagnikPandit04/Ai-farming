@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Health Reports</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            background:#f5f7fa;
+            margin:0;
+            padding:0;
+        }
+
+        .reports-container{
+            max-width:1200px;
+            margin:40px auto;
+            padding:20px;
+        }
+
+        .reports-title{
+            text-align:center;
+            color:#2e7d32;
+            margin-bottom:30px;
+        }
+
+        .reports-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+            gap:20px;
+        }
+
+        .report-card{
+            background:white;
+            border-radius:14px;
+            padding:20px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.1);
+            border-left:6px solid #4caf50;
+        }
+
+        .report-card h3{
+            color:#2e7d32;
+            margin-bottom:10px;
+        }
+
+        .report-card p{
+            margin:8px 0;
+            line-height:1.5;
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <div class="reports-wrapper">
+
+        <h1 class="reports-title">
+            Saved Health Reports
+        </h1>
+
+        <div id="reports-container"></div>
+
+    </div>
+
+
+<style>
+
+body{
+    margin:0;
+    padding:40px;
+    background:#f5f7fa;
+    font-family:Arial,sans-serif;
+}
+
+.reports-wrapper{
+    max-width:1200px;
+    margin:auto;
+}
+
+.reports-title{
+    text-align:center;
+    color:#2e7d32;
+    margin-bottom:30px;
+}
+
+#reports-container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:20px;
+}
+
+.report-card{
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    border-left:6px solid #4caf50;
+}
+
+.report-card h3{
+    color:#2e7d32;
+    margin-bottom:15px;
+}
+
+.report-card p{
+    margin:8px 0;
+    line-height:1.5;
+}
+
+</style>
+
+
+<script>
+
+const API_BASE = 'https://ai-farming-x.onrender.com/api';
+
+async function loadHealthReports() {
+
+    const container = document.getElementById("reports-container");
+
+    try {
+
+        const response = await fetch(`${API_BASE}/health-records`);
+
+        const records = await response.json();
+
+        console.log(records);
+
+        container.innerHTML = "";
+
+        records.forEach(record => {
+
+            const card = document.createElement("div");
+
+            card.className = "report-card";
+
+            card.innerHTML = `
+
+                <h3>${record.animal_id || 'Unknown Animal'}</h3>
+
+                <p>
+                    <strong>Vet:</strong>
+                    ${record.vet_name || 'N/A'}
+                </p>
+
+                <p>
+                    <strong>Date:</strong>
+                    ${record.visit_date || 'N/A'}
+                </p>
+
+                <p>
+                    <strong>Symptoms:</strong>
+                    ${
+                        Array.isArray(record.symptoms)
+                        ? record.symptoms.join(', ')
+                        : 'None'
+                    }
+                </p>
+
+                <p>
+                    <strong>Temperature:</strong>
+                    ${record.temperature || 'N/A'} °C
+                </p>
+
+                <p>
+                    <strong>Heart Rate:</strong>
+                    ${record.heart_rate || 'N/A'} bpm
+                </p>
+
+                <p>
+                    <strong>Diagnosis:</strong>
+                    ${record.diagnosis || 'N/A'}
+                </p>
+
+                <p>
+                    <strong>Medication:</strong>
+                    ${record.medication || 'N/A'}
+                </p>
+
+            `;
+
+            container.appendChild(card);
+
+        });
+
+    } catch(error){
+
+        console.error(error);
+
+    }
+}
+
+window.onload = loadHealthReports;
+
+</script>
+
+</body>
+</html>

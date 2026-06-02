@@ -1,6 +1,6 @@
 // Updated Fertilizer Recommendation Module with Backend Integration
 
-const API_BASE = 'https://ai-farming-x.onrender.com/api';
+const API_BASE =  'https://ai-farming-x.onrender.com/api';
 document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.add("loaded");
 });
@@ -550,3 +550,132 @@ document.getElementById("logout-btn")?.addEventListener("click", () => {
 document.addEventListener("DOMContentLoaded", () => {
     initializeFertilizerRecommendation();
 });
+
+
+// ================= HEALTH RECORDS =================
+
+async function saveHealthRecord() {
+
+    // Collect selected symptoms
+    const selectedSymptoms = [];
+
+document.querySelectorAll('.bs-chip.active').forEach(chip => {
+
+    selectedSymptoms.push(
+        chip.textContent.trim()
+    );
+
+});
+    const data = {
+        animal_id: document.getElementById('bs-animal-id')?.value || 'Unknown',
+        vet_name: document.getElementById('bs-vet-name').value,
+        visit_date: document.getElementById('bs-visit-date').value,
+        symptoms: selectedSymptoms,
+        temperature: document.getElementById('bs-temperature').value,
+        heart_rate: document.getElementById('bs-heart-rate').value,
+        resp_rate: document.getElementById('bs-resp-rate').value,
+        weight: document.getElementById('bs-weight').value,
+        diagnosis: document.getElementById('bs-diagnosis').value,
+        medication: document.getElementById('bs-medication').value
+    };
+
+    try {
+        const response = await fetch(`${API_BASE}/health-records`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert('Health record saved successfully');
+            loadHealthReports();
+        } else {
+            alert(result.error || 'Failed to save record');
+        }
+
+    } catch (error) {
+        console.error(error);
+        alert('Server error');
+    }
+}
+
+async function loadHealthReports() {
+    try {
+        const response = await fetch(`${API_BASE}/health-records`);
+
+        const records = await response.json();
+
+        const container = document.getElementById('reports-container');
+
+        if (!container) return;
+
+        if (records.length === 0) {
+            container.innerHTML = '<p>No reports found.</p>';
+            return;
+        }
+
+        container.innerHTML = records.map(record => `
+            <div class="entry-item">
+                <div>
+                    <h4>${record.animal_id}</h4>
+                    <p><strong>Vet:</strong> ${record.vet_name}</p>
+                    <p><strong>Date:</strong> ${record.visit_date}</p>
+                    <p><strong>Symptoms:</strong> ${
+    Array.isArray(record.symptoms)
+        ? record.symptoms.join(', ')
+        : 'None'
+}</p>
+                    <p><strong>Temperature:</strong> ${record.temperature} °C</p>
+                    <p><strong>Heart Rate:</strong> ${record.heart_rate} bpm</p>
+                    <p><strong>Diagnosis:</strong> ${record.diagnosis}</p>
+                    <p><strong>Medication:</strong> ${record.medication}</p>
+                </div>
+            </div>
+        `).join('');
+
+    } catch (error) {
+        console.error('Error loading reports:', error);
+    }
+}
+
+// Save button click
+const saveBtn = document.getElementById('save-health-record');
+
+if (saveBtn) {
+    saveBtn.addEventListener('click', saveHealthRecord);
+}
+
+
+// Load reports automatically
+window.addEventListener('DOMContentLoaded', loadHealthReports);
+
+// ================= SYMPTOM CHIP SELECTION =================
+
+const symptomChips = document.querySelectorAll('.bs-chip');
+
+symptomChips.forEach(chip => {
+
+    chip.addEventListener('click', () => {
+
+        chip.classList.toggle('active');
+
+    });
+
+});
+
+
+//  Visible and hidden mode introduced to  have a good navigation
+function showModule(moduleId) {
+
+    document.querySelectorAll('.module-section').forEach(section => {
+        section.classList.remove('visible');
+        section.classList.add('hidden');
+    });
+
+    document.getElementById(moduleId).classList.remove('hidden');
+    document.getElementById(moduleId).classList.add('visible');
+}
