@@ -65,6 +65,22 @@
             Saved Health Reports
         </h1>
 
+        <div style="margin-bottom:25px;">
+    <input
+        type="text"
+        id="reportSearch"
+        placeholder="Search by Animal ID, Vet Name, Diagnosis..."
+        onkeyup="searchReports()"
+        style="
+            width:100%;
+            padding:12px;
+            font-size:16px;
+            border:1px solid #ccc;
+            border-radius:8px;
+        "
+    >
+</div>
+
         <div id="reports-container"></div>
 
     </div>
@@ -195,6 +211,28 @@ async function loadHealthReports() {
         console.error(error);
 
     }
+}
+
+function searchReports() {
+
+    const searchValue = document
+        .getElementById("reportSearch")
+        .value
+        .toLowerCase();
+
+    const cards = document.querySelectorAll(".report-card");
+
+    cards.forEach(card => {
+
+        const content = card.textContent.toLowerCase();
+
+        if(content.includes(searchValue)){
+            card.style.display = "block";
+        }else{
+            card.style.display = "none";
+        }
+
+    });
 }
 
 window.onload = loadHealthReports;
